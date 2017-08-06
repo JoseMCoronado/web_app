@@ -1,0 +1,54 @@
+<!-- templates/home.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Message Board</title>
+<meta charset="utf-8">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="row">
+  <div class="container-fluid">
+      <div class="row">
+          <div class="col-md-12">
+              <div class="panel-body">
+                <h2>Enter Message</h2>
+                <form class="form-inline" action="/submit" method=post>
+                  <div class="form-group">
+                    <label for="poster">Author:</label>
+                      <input type="char" name="poster" class="form-control" id="poster" placeholder="Leave blank for anon..."></input>
+                    </div>
+                  <div class="form-group">
+                    <label  for="poster">Message:</label>
+                      <input  type="text" name="paste" class="form-control" id="paste" placeholder="Write your message..."></input>
+                  </div>
+                      <button type="submit" value="Submit" class="btn btn-default">Submit</button>
+                </form>
+              </div>
+              <div class="panel-body">
+                <h2>Search</h2>
+                <form class="form-inline" action="/search" method=post>
+                  <div class="form-group">
+                    <label for="poster">Field:</label>
+                      <input type="char" name="field" class="form-control" id="field" placeholder="e.g. poster"></input>
+                    </div>
+                  <div class="form-group">
+                    <label  for="poster">Value:</label>
+                      <input  type="text" name="value" class="form-control" id="value" placeholder="e.g. John"></input>
+                  </div>
+                      <button type="submit"  class="btn btn-default">Submit</button>
+                </form>
+              </div>
+          </div>
+      </div>
+</div>
+{% include "allpastes.html" %}
+</div>
+</body>
+</html>
