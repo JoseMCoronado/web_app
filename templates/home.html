@@ -5,12 +5,24 @@
 <head>
 <title>Message Board</title>
 <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Latest compiled and minified CSS -->
+<title>{% block title %}{% endblock %}</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
 <!-- Latest compiled JavaScript -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link href="/static/css/chart.css" rel="stylesheet">
+<form class="form-chart">
+  <label class="label-chart"><input type="radio" name="mode" value="grouped"> Grouped</label>
+  <label class="label-chart"><input type="radio" name="mode" value="stacked" checked> Stacked</label>
+</form>
+<svg width="1024" height="350"></svg>
+<script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+<script src="/static/chart.js"></script>
 </head>
 <body>
 <div class="row">
@@ -27,6 +39,10 @@
                   <div class="form-group">
                     <label  for="poster">Message:</label>
                       <input  type="text" name="paste" class="form-control" id="paste" placeholder="Write your message..."></input>
+                  </div>
+                  <div class="form-group">
+                    <label  for="poster">Value:</label>
+                      <input  type="integer" name="value" class="form-control" id="value" placeholder="e.g. 8"></input>
                   </div>
                       <button type="submit" value="Submit" class="btn btn-default">Submit</button>
                 </form>
@@ -50,5 +66,6 @@
 </div>
 {% include "allpastes.html" %}
 </div>
+<div class="chart"></div>
 </body>
 </html>
