@@ -1,31 +1,17 @@
 d3.json("/data/dataforchart", function(data) {
   console.dir(data);
 
-var n = 2 // The number of series.
-    m = data.length  // The number of values per series.
+var n = 2
+    m = data.length
 
-// The xz array has m elements, representing the x-values shared by all series.
-// The yz array has n elements, representing the y-values of each of the n series.
-// Each yz[i] is an array of m non-negative numbers representing a y-value for xz[i].
-// The y01z array has the same structure as yz, but with stacked [y₀, y₁] instead of y.
 var xy = d3.range(m),
     xz = data.map(function(d) { return d.name; }),
-    //yz = d3.range(n).map(function() { return bumps(m); }),
     test = data.map(function(d) { return d.tot; }),
-    //test2 = data.map(function(d) { return d.tot2; }),
-    //etest = test.concat(test2);
     yz = d3.range(n).map(function() { return test; }),
-    //yz = data.map(function(d) { return d.tot2; }),
     y01z = d3.stack().keys(d3.range(n))(d3.transpose(yz)),
     yMax = d3.max(yz, function(y) { return d3.max(y); }),
     y1Max = d3.max(y01z, function(y) { return d3.max(y, function(d) { return d[1]; }); });
 
-//alert(bumps(m));
-//alert(d3.range(n).map(function() { return bumps(m); }));
-//alert(d3.stack().keys(d3.range(n))(d3.transpose(yz)));
-//alert(yz);
-//alert(y01z);
-//alert(yMax);
 //alert(y1Max);
 
 
@@ -119,33 +105,4 @@ function transitionStacked() {
       .attr("width", xtend.bandwidth());
 }
 
-// Returns an array of m psuedorandom, smoothly-varying non-negative numbers.
-// Inspired by Lee Byron’s test data generator.
-// http://leebyron.com/streamgraph/
-function bumps(m) {
-  var values = [], i, j, w, x, y, z;
-
-  // Initialize with uniform random values in [0.1, 0.2).
-  for (i = 0; i < m; ++i) {
-    values[i] = 0.1 + 0.1 * Math.random();
-  }
-
-  // Add five random bumps.
-  for (j = 0; j < 5; ++j) {
-    x = 1 / (0.1 + Math.random());
-    y = 2 * Math.random() - 0.5;
-    z = 10 / (0.1 + Math.random());
-    for (i = 0; i < m; i++) {
-      w = (i / m - y) * z;
-      values[i] += x * Math.exp(-w * w);
-    }
-  }
-
-  // Ensure all values are positive.
-  for (i = 0; i < m; ++i) {
-    values[i] = Math.max(0, values[i]);
-  }
-
-  return values;
-}
 });

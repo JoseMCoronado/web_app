@@ -11,10 +11,9 @@ import json
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-
-#def geturl(user, password, db, host='localhost', port=5432):
-#    url = 'postgresql://{}:{}@{}:{}/{}'
-#    url = url.format(user, password, host, port, db)
+def geturl(user, password, db, host='localhost', port=5432):
+    url = 'postgresql://{}:{}@{}:{}/{}'
+    url = url.format(user, password, host, port, db)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 if app.config['SQLALCHEMY_DATABASE_URI'] == None:
@@ -22,8 +21,8 @@ if app.config['SQLALCHEMY_DATABASE_URI'] == None:
     sys.exit(1)
 
 db = SQLAlchemy(app)
+
 import models
-# main.py
 
 @app.route("/", methods=['GET','POST'])
 def show_home_page():
@@ -47,6 +46,7 @@ def display_messages_by():
 
 @app.route('/search/<field>/<value>')
 def search_result(field,value):
+        #MULTIPLE SEARCH CRITERIA
         #criteria = (('id', 2), ('paste', 1) ,('poster', 353))
         #query = session.query(tablename)
         #for _filter, value in criteria:
@@ -68,23 +68,13 @@ def submit():
     db.session.commit()
 
     print "added paste by %s with id %s" % (paste.poster, paste.id)
+    #route to other page
     #return render_template("success.html", id=paste.id)
+    #reroute to home
     pastes = models.Paste.query.order_by("date desc").limit(10)
     if pastes == None:
         raise Exception("No pastes in db")
     return render_template("home.html", pastes=pastes)
-
-#@app.route("/<id>")
-#def show(id):
-#    pastes = models.Paste.query.filter_by(id=id)
-#    prepaste = pastes.first()
-#    pasteid = prepaste.id
-#    pastecontent = prepaste.paste
-
-#    if prepaste == None:
-#        raise Exception("No such paste by id %s" % id)
-
-#    return render_template("paste.html", pasteid=pasteid, pastecontent=pastecontent)
 
 @app.route("/all")
 def showall():
@@ -99,14 +89,15 @@ def api_all():
   events = models.Paste.query.all()
   return jsonify([p.serialize for p in events])
 
+@app.route('/api/alljsonlist')
+def api_all_json_list():
+    events = models.Paste.query.all()
+    return jsonify(json_list = [p.serialize for p in events])
+
 @app.route('/api/<event_type>')
 def api_by_event_type(event_type):
   events = models.Paste.query.filter_by(poster = event_type).all()
   return jsonify(json_list = [p.serialize for p in events])
-
-@app.route("/data")
-def data():
-    return api_all()
 
 @app.route("/chart")
 def chart():
@@ -114,9 +105,6 @@ def chart():
 
 @app.route("/data/dataforchart")
 def data_for_chart():
-    #works 5pm pastes = models.Paste.query.order_by("date desc").all()
-    #works 5pm json_list = [p.serialize for p in pastes]
-    #works 5pm return json.dumps(json_list)
     pastes = models.Paste.query.order_by("date desc").all()
     d = dict()
     for p in pastes:
@@ -133,11 +121,6 @@ def data_for_chart():
         x['tot'] = sec[1][0]
         x['tot2'] = sec[1][1]
         listdict.append(x)
-    #for sec in d.items():
-    #    x = dict()
-    #    x['name'] = sec[0]
-    #    x['tot'] = sec[1][1]
-    #    listdict.append(x)
     return json.dumps(listdict)
 
 @app.route("/oldfaith")
@@ -145,31 +128,6 @@ def old():
     pastes = models.Paste.query.order_by("date desc").all()
     json_list = [p.serialize for p in pastes]
     return json.dumps(json_list)
-
-@app.route("/lotsofdata")
-def people():
-    my_people = {
-        'alice': 25,
-        'bob': 21,
-        'charlie': 20,
-        'doug': 28
-    }
-    return my_people
-
-@app.route("/map")
-def displaymap():
-    return render_template("map.html")
-
-@app.route('/projects/highpoverty/states')
-def high_poverty_states():
-    donors_choose_url = "http://api.donorschoose.org/common/json_feed.html?highLevelPoverty=true&APIKey=DONORSCHOOSE"
-    response = urllib2.urlopen(donors_choose_url)
-    json_response = json.load(response)
-    states = set()
-    for proposal in json_response["proposals"]:
-        states.add(proposal["state"])
-
-    return json.dumps(list(states))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0',debug=True)
